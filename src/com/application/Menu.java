@@ -196,68 +196,72 @@ public class Menu
 				System.out.println(recipeName + " ERROR");
 			}
 			
-			// statement for adding the ingredients, note we ignore any duplicates
-			query = "INSERT IGNORE INTO ingredient (`Name`) VALUES (?)";
-			statement = myConnection.prepareStatement(query);
-			
-			for (String current: ingredients)
+			// ingredient section
+			if (ingredients.size() > 0)
 			{
-				statement.setString(1, current);
-				statement.addBatch();
-			}
-			
-			// executing the ingredients statement
-			if (statement.executeBatch().length > 0)
-			{
-				System.out.println("Ingredients were succesfully published");
-			}
-			else
-			{
-				System.out.println("Ingredient ERROR");
-			}
-			
-			// section to connect the ingredients to the recipe
-			// creating pair connection
-			query = "select ID from recipe where Name = ?";
-			statement = myConnection.prepareStatement(query);
-			statement.setString(1, recipeName);
-			resultSet = statement.executeQuery();
-			
-			// getting the recipe ID
-			resultSet.first();
-			int recipeID = resultSet.getInt("ID");
-			
-			// getting the ingredients ID
-			query = "select ID from ingredient where Name = ?";
-			statement = myConnection.prepareStatement(query);
-			List<Integer> ingredientsID = new ArrayList<>();
-			
-			// storing the ID of each ingredient related to this recipe
-			for (String current: ingredients)
-			{
-				statement.setString(1, current);
+				// statement for adding the ingredients, note we ignore any duplicates
+				query = "INSERT IGNORE INTO ingredient (`Name`) VALUES (?)";
+				statement = myConnection.prepareStatement(query);
+				
+				for (String current: ingredients)
+				{
+					statement.setString(1, current);
+					statement.addBatch();
+				}
+				
+				// executing the ingredients statement
+				if (statement.executeBatch().length > 0)
+				{
+					System.out.println("Ingredients were succesfully published");
+				}
+				else
+				{
+					System.out.println("Ingredient ERROR");
+				}
+				
+				// section to connect the ingredients to the recipe
+				// creating pair connection
+				query = "select ID from recipe where Name = ?";
+				statement = myConnection.prepareStatement(query);
+				statement.setString(1, recipeName);
 				resultSet = statement.executeQuery();
+				
+				// getting the recipe ID
 				resultSet.first();
-				ingredientsID.add(resultSet.getInt("ID"));
-			}
-			
-			// Inserting the new recipe ingredient pair record
-			query = "INSERT INTO recipe_ingredient (`RecipeID`, `IngredientID`) VALUES (?, ?)";
-			statement = myConnection.prepareStatement(query);
-			for (Integer current : ingredientsID)
-			{
-				statement.setInt(1, recipeID);
-				statement.setInt(2, current);
-				statement.addBatch();
-			}
-			
-			if (statement.executeBatch().length > 0)
-			{
-				System.out.println("Recipe/Ingredients pair Successfully Published");
-			}
-			else
-			{
-				System.out.println("Recipe.Ingredients pair ERROR");
+				int recipeID = resultSet.getInt("ID");
+				
+				// getting the ingredients ID
+				query = "select ID from ingredient where Name = ?";
+				statement = myConnection.prepareStatement(query);
+				List<Integer> ingredientsID = new ArrayList<>();
+				
+				// storing the ID of each ingredient related to this recipe
+				for (String current: ingredients)
+				{
+					statement.setString(1, current);
+					resultSet = statement.executeQuery();
+					resultSet.first();
+					ingredientsID.add(resultSet.getInt("ID"));
+				}
+				
+				// Inserting the new recipe ingredient pair record
+				query = "INSERT INTO recipe_ingredient (`RecipeID`, `IngredientID`) VALUES (?, ?)";
+				statement = myConnection.prepareStatement(query);
+				for (Integer current : ingredientsID)
+				{
+					statement.setInt(1, recipeID);
+					statement.setInt(2, current);
+					statement.addBatch();
+				}
+				
+				if (statement.executeBatch().length > 0)
+				{
+					System.out.println("Recipe/Ingredients pair Successfully Published");
+				}
+				else
+				{
+					System.out.println("Recipe/Ingredients pair ERROR");
+				}
 			}
 		}
 	}
@@ -619,7 +623,8 @@ public class Menu
 			System.out.println("\nPlease select an option:");
 			System.out.println("1. Save Recipe");
 			System.out.println("2. Rate Recipe");
-			System.out.println("3. Exit");
+			System.out.println("3. Delete Recipe");
+			System.out.println("4. Exit");
 			choice2 = input.nextInt();
 			
 			switch (choice2)
@@ -638,15 +643,21 @@ public class Menu
 				}
 				case 3:
 				{
+					// deleting the recipe
+					deleteRecipe();
+					break;
+				}
+				case 4:
+				{
 					// returning to main menu
 					break;
 				}
 				default:
 				{
-					System.out.println("Invalid choice entry, please provide a value of 1-3\n");
+					System.out.println("Invalid choice entry, please provide a value of 1-4\n");
 				}
 			}
-		} while (choice2 < 1 || choice2 > 3);
+		} while (choice2 < 1 || choice2 > 4);
 	}
 
 	// method for rating a recipe
@@ -749,6 +760,28 @@ public class Menu
 		catch (FileNotFoundException e)
 		{
 			System.out.println(e.getMessage());
+		}
+	}
+	
+	// method allowing the user to delete the selected recipe
+	public static void deleteRecipe() throws SQLException
+	{
+		String query = "delete from recipe where ID = ?";
+		
+		statement = myConnection.prepareStatement(query);
+		
+		// getting the current ID
+		int recipeID = resultSet.getInt("ID");
+		statement.setInt(1, recipeID);
+		
+		// executing the statement
+		if (statement.executeUpdate() == 1)
+		{
+			System.out.println("Recipe succesfully deleted");
+		}
+		else
+		{
+			System.out.println("Recipe delete ERROR");
 		}
 	}
 	
