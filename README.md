@@ -4,7 +4,7 @@ Created using Java Core, JDBC, and MySQL
 
 Features Include  
 Publishing a new Recipe  
-Searching from the large librabry through various filters such as (search by ingredient, highest rated, lowest preperation time, etc)  
+Searching from the large librabry through various filters such as (search by ingredient, highest rated, lowest preparation time, etc)  
 Saving a Recipe  
 Rating a Recipe  
 Deleting a Recipe  
