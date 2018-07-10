@@ -9,4 +9,4 @@ Saving a Recipe
 Rating a Recipe  
   
 Schema Design  
-(https://i.imgur.com/yFjVG4G.jpg)
+![image](https://i.imgur.com/yFjVG4G.jpg)
