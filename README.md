@@ -7,6 +7,7 @@ Publishing a new Recipe
 Searching from the large librabry through various filters such as (search by ingredient, highest rated, lowest preperation time, etc)  
 Saving a Recipe  
 Rating a Recipe  
+Deleting a Recipe  
   
 Schema Design  
 ![image](https://i.imgur.com/yFjVG4G.jpg)
